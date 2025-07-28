@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  apache-php:
+    image: php:8.4-apache
+    container_name: apache-php
+    ports:
+      - "8080:80" # Maps port 8080 on your host to port 80 in the container
+    volumes:
+      - ./www:/var/www/html # Mounts your local `www` directory to the container's web root
+      - ./php.ini:/usr/local/etc/php/php.ini # Optional: Custom PHP configuration
+    depends_on:
+      - mariadb
+    networks:
+      - lamp-network
+
+  mariadb:
+    image: mariadb:11.8
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: k0145YqIE6IWL0lF # Replace with a secure password
+      MYSQL_DATABASE: lansendb       # Replace with your database name
+      MYSQL_USER: lansen                  # Replace with your database user
+      MYSQL_PASSWORD: k0145YqIE6IWL0lF      # Replace with a secure password
+    volumes:
+      - db_data:/var/lib/mysql # Persistent storage for MariaDB
+    networks:
+      - lamp-network
+
+volumes:
+  db_data: # Named volume for MariaDB data
+
+networks:
+  lamp-network: # Custom network for the LAMP stack

@@ -7,16 +7,23 @@ services:
     ports:
       - "8080:80" # Maps port 8080 on your host to port 80 in the container
     volumes:
-      - ./www:/var/www/html # Mounts your local `www` directory to the container's web root
+      - ../lansen/static:/var/www/html
+      - ./www/contact.php:/var/www/html/contact.php # Mounts your local `www` directory to the container's web root
+      - ./src:/var/www/src #mounts source outside of html
       - ./php.ini:/usr/local/etc/php/php.ini # Optional: Custom PHP configuration
     depends_on:
       - mariadb
     networks:
       - lamp-network
+    command: >
+      bash -c "docker-php-ext-install mysqli && docker-php-ext-enable mysqli && apache2-foreground"
 
   mariadb:
     image: mariadb:11.8
     container_name: mariadb
+    expose:
+      - 3306
+      - 33060
     environment:
       MYSQL_ROOT_PASSWORD: k0145YqIE6IWL0lF # Replace with a secure password
       MYSQL_DATABASE: lansendb       # Replace with your database name
@@ -26,6 +33,7 @@ services:
       - db_data:/var/lib/mysql # Persistent storage for MariaDB
     networks:
       - lamp-network
+    command: '--default-authentication-plugin=mysql_native_password'
 
 volumes:
   db_data: # Named volume for MariaDB data

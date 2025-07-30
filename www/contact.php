@@ -56,7 +56,7 @@ switch ($method) {
       $result = $model->add_contact($input);
       $view->set_value($result);
     } catch (Exception $e) {
-      $view->set_error($e);
+      $view->set_error("Error Saving. " . $e);
     }
     break;
 
